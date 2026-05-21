@@ -10,6 +10,13 @@ from .vector_store import ChromaVectorStore, RetrievedChunk
 
 
 @dataclass(frozen=True)
+class DirectNLPResult:
+    answer: str
+    model: str
+    task: str
+
+
+@dataclass(frozen=True)
 class RAGAnswer:
     answer: str
     context_chunks: list[RetrievedChunk]
@@ -123,3 +130,38 @@ def run_nlp_task(
         user_prompt=user_prompt,
     )
     return RAGAnswer(answer=answer, context_chunks=chunks)
+
+
+def run_direct_nlp(
+    task: str,
+    text: str,
+    chat_model: str,
+) -> DirectNLPResult:
+    """Run an NLP task directly on supplied text without any vector retrieval."""
+    settings = get_settings()
+
+    system_prompt = dedent(
+        """
+        You are an expert NLP assistant.
+        Perform the requested task accurately on the provided text.
+        Only use information present in the text.
+        """
+    ).strip()
+
+    user_prompt = dedent(
+        f"""
+        NLP Task:
+        {task}
+
+        Text:
+        {text}
+        """
+    ).strip()
+
+    answer = chat_with_ollama(
+        base_url=settings.ollama_base_url,
+        model=chat_model,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+    )
+    return DirectNLPResult(answer=answer, model=chat_model, task=task)

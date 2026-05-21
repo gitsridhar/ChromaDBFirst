@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from .config import get_settings
 from .ollama_client import list_models, resolve_model_name
 from .pdf_ingest import extract_pdf_chunks, ollama_embed
-from .rag_app import answer_question, run_nlp_task
+from .rag_app import answer_question, run_nlp_task, run_direct_nlp
 from .vector_store import ChromaVectorStore
 
 
@@ -137,6 +137,31 @@ def cmd_nlp(args: argparse.Namespace) -> None:
     print(f"Embedding model: {embedding_model}")
 
 
+def cmd_nlp_direct(args: argparse.Namespace) -> None:
+    settings = get_settings()
+    chat_model = resolve_model_name(
+        base_url=settings.ollama_base_url,
+        requested=args.chat_model,
+        model_type="chat",
+    )
+
+    if args.file:
+        text = Path(args.file).read_text(encoding="utf-8", errors="replace")
+    else:
+        text = args.text
+
+    result = run_direct_nlp(
+        task=args.task,
+        text=text,
+        chat_model=chat_model,
+    )
+
+    print("\nNLP Result:\n")
+    print(result.answer)
+    print(f"\nModel: {result.model}")
+    print(f"Task: {result.task}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="agentic-rag",
@@ -190,6 +215,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     nlp.add_argument("--top-k", type=int, default=4, help="Number of chunks to retrieve")
     nlp.set_defaults(func=cmd_nlp)
+
+    nlp_direct = sub.add_parser(
+        "nlp-direct",
+        help="Run an NLP task on raw text without any vector retrieval.",
+    )
+    nlp_direct.add_argument("--task", required=True, help="NLP task instruction (e.g. 'summarize', 'extract entities', 'translate to French')")
+    text_group = nlp_direct.add_mutually_exclusive_group(required=True)
+    text_group.add_argument("--text", help="Raw text to process")
+    text_group.add_argument("--file", help="Path to a plain-text or PDF-extracted text file to process")
+    nlp_direct.add_argument(
+        "--chat-model",
+        default="auto",
+        help="Ollama chat model name, or 'auto'",
+    )
+    nlp_direct.set_defaults(func=cmd_nlp_direct)
 
     return parser
 

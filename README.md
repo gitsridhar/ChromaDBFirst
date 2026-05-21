@@ -103,3 +103,22 @@ agentic-rag nlp \
   - higher `--top-k`,
   - different embedding model.
 # ChromaDBFirst
+
+
+# inline text
+python -m agentic_rag nlp-direct \
+  --task "Summarize in 3 bullet points" \
+  --text "Your text here..." \
+  --chat-model auto
+
+# from a file
+python -m agentic_rag nlp-direct \
+  --task "Extract all named entities" \
+  --file /path/to/notes.txt \
+  --chat-model llama3.1
+
+# other NLP tasks: translate, classify, sentiment, rewrite, extract key dates, etc.
+python -m agentic_rag nlp-direct \
+  --task "Translate to French" \
+  --text "The contract expires in June." \
+  --chat-model auto
