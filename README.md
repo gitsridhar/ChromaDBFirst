@@ -102,7 +102,7 @@ agentic-rag nlp \
   - smaller chunk size,
   - higher `--top-k`,
   - different embedding model.
-# ChromaDBFirst
+
 
 
 # inline text
@@ -122,3 +122,5 @@ python -m agentic_rag nlp-direct \
   --task "Translate to French" \
   --text "The contract expires in June." \
   --chat-model auto
+
+# ChromaDBFirst
