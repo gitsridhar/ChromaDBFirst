@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+src/agentic_rag/__init__.py
+src/agentic_rag/__main__.py
+src/agentic_rag/cli.py
+src/agentic_rag/config.py
+src/agentic_rag/pdf_ingest.py
+src/agentic_rag/rag_app.py
+src/agentic_rag/vector_store.py
+src/agentic_rag_ollama.egg-info/PKG-INFO
+src/agentic_rag_ollama.egg-info/SOURCES.txt
+src/agentic_rag_ollama.egg-info/dependency_links.txt
+src/agentic_rag_ollama.egg-info/entry_points.txt
+src/agentic_rag_ollama.egg-info/requires.txt
+src/agentic_rag_ollama.egg-info/top_level.txt
